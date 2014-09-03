@@ -1,0 +1,20 @@
+repository x /tmp/test.repo
+
+createfile f1 "/a/b/Hello.java"
+createfile f2 "/a/b/Welt.java"
+
+commit "Zwei Dateien hinzugefügt"
+
+checkout "feature-1"
+
+modifyfile f1 
+deletefile f2
+
+commit "Aenderung feature1"
+
+checkout "master"
+
+merge feature-1 "Abschluss Feature 1"
+
+
+
