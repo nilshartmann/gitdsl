@@ -6,9 +6,9 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>nh.example</groupId>
-	<artifactId>moin</artifactId>
-	<name>Moin, moin, Freunde</name>
+	<groupId>nh.maventest</groupId>
+	<artifactId>gitdsl</artifactId>
+	<name>Groovy DSL for setting up test repositories</name>
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
@@ -61,7 +61,7 @@
 						<version>2.5.1-1</version>
 					</dependency>
 					<!-- Uncomment to compile against Groovy 1.7.10 -->
-					<!-- <dependency> <groupId>org.codehaus.groovy</groupId> <artifactId>groovy-eclipse-batch</artifactId> 
+					<!-- <dependency> <groupId>org.codehaus.groovy</groupId> <artifactId>groovy-eclipse-batch</artifactId>
 						<version>1.7.10-02</version> </dependency> -->
 				</dependencies>
 			</plugin>
