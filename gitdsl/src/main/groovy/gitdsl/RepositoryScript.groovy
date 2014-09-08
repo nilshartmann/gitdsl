@@ -21,6 +21,7 @@ class RepositoryScript {
 	final File repositoryRoot
 	final Repository repository;
 	final Map files = [:]
+	final Map plugins = [:];
 	int commitCount = 0;
 
 	RepositoryScript(Repository repository) {
@@ -29,6 +30,38 @@ class RepositoryScript {
 		this.repository = repository;
 		this.repositoryRoot = repository.getDirectory().getParentFile();
 	}
+	
+	def usePlugin(String id, String pluginName) {
+		log.info "Loading Plug-in '$pluginName' as $id"
+		
+		final Class pluginClass = Class.forName(pluginName);
+		def plugin = pluginClass.newInstance(this)
+		plugins.put(id, plugin);
+		
+	}
+	
+	def propertyMissing(String propertyName) {
+		def plugin = plugins[propertyName];
+		
+		if (plugin == null) {
+			throw new IllegalStateException("Property '$propertyName' not found. Missing Plug-in import?");
+		}
+		
+		return plugin;
+	}
+	
+//	def methodMissing(String methodName, args) {
+//		log.error "METHOD '$methodName' missing with args: $args"
+//		
+//		for (plugin in plugins) {
+//			if (plugin.metaClass.respondsTo(plugin, methodName, args)) {
+//				return plugin.metaClass.invokeMethod(plugin,methodName, args);
+//			}
+//		}
+//		
+//		 throw new MissingMethodException(methodName, this.class, args)
+//		
+//	}
 
 	def addFile(Map args, String id=null) {
 
