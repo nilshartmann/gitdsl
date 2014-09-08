@@ -10,22 +10,24 @@ import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Repository
 
 import groovy.util.logging.Log;
+import groovy.util.logging.Log4j2;
+import groovy.util.logging.Slf4j;
 
-@Log
+@Log4j2
 class RepositoryScript {
 
 	static final def ln = System.getProperty('line.separator')
 
-	File location
-	Repository repository;
-	Map files = [:]
+	final File repositoryRoot
+	final Repository repository;
+	final Map files = [:]
 	int commitCount = 0;
 
 	RepositoryScript(Repository repository) {
 		assert repository;
 
 		this.repository = repository;
-		this.location = repository.getDirectory().getParentFile();
+		this.repositoryRoot = repository.getDirectory().getParentFile();
 	}
 
 	def addFile(Map args, String id=null) {
@@ -34,22 +36,17 @@ class RepositoryScript {
 			id = "f${files.size()+1}"
 		}
 
+		// Sicherstellen, dass es noch keine Datei mit dieser Id gibt
 		assert ! files[id]
 
-		String locationInRepo = args.get('path', '');
-		String content = args.get('content', "Line1${ln}Line2${ln}Line3");
-
-		if (locationInRepo.startsWith('/')) {
-			locationInRepo = locationInRepo.substring(1);
-		}
+		final String locationInRepo = args.get('path', '');
+		final String content = args.get('content', "Line1${ln}Line2${ln}Line3");
 
 		log.info "Create File '$locationInRepo' with id '$id'"
 
-		File newFile = new File(location, locationInRepo);
-		RepositoryFile repositoryFile = new RepositoryFile(newFile, locationInRepo);
+		RepositoryFile repositoryFile = new RepositoryFile(repositoryRoot, locationInRepo, content);
 		files.put id, repositoryFile
 
-		repositoryFile.writeContent content;
 
 		return repositoryFile
 	}
@@ -65,21 +62,11 @@ class RepositoryScript {
 		RepositoryFile repoFile = files[id];
 		assert repoFile;
 
-		final oldLocationInRepo = repoFile.locationInRepository;
-
 		String locationInRepo = args.get('topath', '');
-		String content = args.get('content', "Line1${ln}Line2${ln}Line3");
+		String content = args.get('content');
 
-		if (locationInRepo.startsWith('/')) {
-			locationInRepo = locationInRepo.substring(1);
-		}
-
-		File newFile = new File(location, locationInRepo);
-
-		repoFile.moveTo newFile, locationInRepo
-		if (content) {
-			repoFile.writeContent content
-		}
+		final oldLocationInRepo = repoFile.moveTo(locationInRepo, content)
+		
 
 		Git git = new Git(repository)
 		git.rm().addFilepattern(oldLocationInRepo).call();
@@ -109,7 +96,6 @@ class RepositoryScript {
 	def checkout(Map args=new Hashtable(), String branchName) {
 		Git git = new Git(repository);
 		def orphan = args.get('orphan', false);
-		println "branch: $branchName, orphan: $orphan"
 		def branches = git.branchList().call()
 		def createBranch = true;
 		def refName = "refs/heads/" + branchName;
@@ -119,6 +105,9 @@ class RepositoryScript {
 				break;
 			}
 		}
+		
+		log.info "${createBranch?'erzeuge':'aktiviere'} Branch $branchName"
+		
 		git.checkout().setCreateBranch(createBranch).setOrphan(orphan).setName(branchName).call();
 	}
 
