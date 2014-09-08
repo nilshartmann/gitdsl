@@ -84,6 +84,14 @@ class RepositoryScript {
 		Git git = new Git(repository)
 		git.rm().addFilepattern(oldLocationInRepo).call();
 	}
+	
+	def removeFile(String id) {
+		RepositoryFile repoFile = files.remove(id);
+		assert repoFile;
+		
+		Git git = new Git(repository)
+		git.rm().addFilepattern(repoFile.locationInRepository).call();
+	}
 
 	def commit(String message) {
 		commitCount++;
