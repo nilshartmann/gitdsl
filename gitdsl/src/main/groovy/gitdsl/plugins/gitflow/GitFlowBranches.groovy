@@ -3,6 +3,7 @@ package gitdsl.plugins.gitflow
 class GitFlowBranches {
 
 	String master = 'master';
-	String develop = 'develop';
+	String develop = 'develop'
+	String feature = 'feature'
 	
 }
