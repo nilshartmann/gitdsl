@@ -59,6 +59,8 @@ public class HalloWelt {
 	checkout 'feature-2'
 	removeFile 'f1'
 	commit 'Datei World.java geloescht'
+	checkout 'master'
+	merge 'feature-2'
 			
 }
 

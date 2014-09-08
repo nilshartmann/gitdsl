@@ -1,5 +1,7 @@
 package gitdsl
 
+import groovy.util.logging.Log4j2;
+
 import java.io.File;
 
 /**
@@ -7,6 +9,7 @@ import java.io.File;
  * @author nils
  *
  */
+@Log4j2
 class RepositoryFile {
 	
 	
@@ -57,6 +60,8 @@ class RepositoryFile {
 		
 		this.locationInRepository = removeLeadingSlash(locationInRepository);
 		this.file = createFile(locationInRepository);
+		
+		log.info "Move File '$oldLocationInRepo' to '$locationInRepository'"
 		
 		// Datei verschieben und ggf umbenennen
 		boolean fileMoved = oldFile.renameTo(file)

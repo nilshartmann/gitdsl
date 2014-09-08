@@ -65,6 +65,8 @@ class RepositoryScript {
 		String locationInRepo = args.get('topath', '');
 		String content = args.get('content');
 
+		
+		
 		final oldLocationInRepo = repoFile.moveTo(locationInRepo, content)
 		
 
@@ -106,7 +108,7 @@ class RepositoryScript {
 			}
 		}
 		
-		log.info "${createBranch?'erzeuge':'aktiviere'} Branch $branchName"
+		log.info "${createBranch?'Erzeuge':'Aktiviere'} Branch '$branchName'. Orphan: $orphan"
 		
 		git.checkout().setCreateBranch(createBranch).setOrphan(orphan).setName(branchName).call();
 	}
@@ -118,11 +120,10 @@ class RepositoryScript {
 
 		ObjectId ref = repository.resolve("refs/heads/$branchName")
 
-		println("Noff: $noff");
-
+		log.info "Merge Branch '$branchName' (${ref.abbreviate(5).name()}) from '${repository.getFullBranch()}'. No-FastForward: $noff"
+		
 		MergeCommand merge = git.merge().include(ref).setCommit(!message)
-
-
+		
 		if (noff) {
 			merge = merge.setFastForward(FastForwardMode.NO_FF)
 		}
@@ -130,7 +131,6 @@ class RepositoryScript {
 		merge.call()
 
 		if (message) {
-			println("Commit mit Message $message");
 			git.commit().setMessage(message).call();
 		}
 	}
