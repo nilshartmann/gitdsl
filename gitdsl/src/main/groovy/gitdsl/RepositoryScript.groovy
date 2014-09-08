@@ -113,10 +113,23 @@ class RepositoryScript {
 		git.checkout().setCreateBranch(createBranch).setOrphan(orphan).setName(branchName).call();
 	}
 
+	/**
+	 * Mergt den angegebenen Branch in den aktuellen Branch. Per Default wird der Merge
+	 * mit 'no-ff' ausgeführt, so dass ein Merge Commit entsteht.
+	 * 
+	 * <p>Mögliche Optionen (alle optinal)</p>
+	 * <ul>
+	 * <li>noff: true|false</li>
+	 * <li>message: Commit-Message für den Commit-Kommentar
+	 * </li>
+	 * 
+	 * @param branchName
+	 * @return
+	 */
 	def merge(Map args=new Hashtable(), String branchName) {
 		Git git = new Git(repository);
 		String message = args.get('message');
-		boolean noff = args.get('noff', false);
+		boolean noff = args.get('noff', true);
 
 		ObjectId ref = repository.resolve("refs/heads/$branchName")
 
