@@ -95,12 +95,26 @@ class RepositoryScript {
 	}
 
 
+	/**
+	 * Aktiviert den angegebenen Branchnamen. Wenn der Branch noch nicht exisitert, wird er angelegt
+	 * 
+	 * <p>Mögliche Optionen (alle optional):
+	 * <ul>
+	 * <li>mergeCurrentBranch</li>: Mergt den aktuellen Branch nach dem auschecken des übergebenen Branches mit 'no-ff'
+	 * </ul>
+	 * @param branchName Der Name des Branches
+	 * @return
+	 */
 	def checkout(Map args=new Hashtable(), String branchName) {
-		Git git = new Git(repository);
-		def orphan = args.get('orphan', false);
-		def branches = git.branchList().call()
+		final Git git = new Git(repository);
+		final boolean orphan = args.get('orphan', false);
+		final def branches = git.branchList().call()
+		final def refName = "refs/heads/" + branchName;
+		final boolean mergeCurrentBranch = args.get('mergeCurrentBranch');
+		final String currentBranch = repository.getBranch();
+		
+		
 		def createBranch = true;
-		def refName = "refs/heads/" + branchName;
 		for (branch in branches) {
 			if (refName == branch.getName()) {
 				createBranch = false;
@@ -111,6 +125,11 @@ class RepositoryScript {
 		log.info "${createBranch?'Erzeuge':'Aktiviere'} Branch '$branchName'. Orphan: $orphan"
 		
 		git.checkout().setCreateBranch(createBranch).setOrphan(orphan).setName(branchName).call();
+
+	
+		if (mergeCurrentBranch) {
+			merge(currentBranch);
+		}	
 	}
 
 	/**
