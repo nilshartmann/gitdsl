@@ -1,3 +1,4 @@
+package example
 import gitdsl.GitRepository;
 
 // Neues Repository in /tmp/testrepo anlegen
