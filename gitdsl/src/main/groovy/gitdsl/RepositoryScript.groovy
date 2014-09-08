@@ -101,6 +101,7 @@ class RepositoryScript {
 	 * <p>Mögliche Optionen (alle optional):
 	 * <ul>
 	 * <li>mergeCurrentBranch</li>: Mergt den aktuellen Branch nach dem auschecken des übergebenen Branches mit 'no-ff'
+	 * <li>mergeCommitMessage</li>: Commit-Message für den Merge, falls mergeCurrentBranch auf 'true' steht
 	 * </ul>
 	 * @param branchName Der Name des Branches
 	 * @return
@@ -128,7 +129,7 @@ class RepositoryScript {
 
 	
 		if (mergeCurrentBranch) {
-			merge(currentBranch);
+			merge(currentBranch, message: args.get('mergeCommitMessage'));
 		}	
 	}
 
@@ -146,21 +147,20 @@ class RepositoryScript {
 	 * @return
 	 */
 	def merge(Map args=new Hashtable(), String branchName) {
-		Git git = new Git(repository);
 		String message = args.get('message');
 		boolean noff = args.get('noff', true);
 
 		ObjectId ref = repository.resolve("refs/heads/$branchName")
-
-		log.info "Merge Branch '$branchName' (${ref.abbreviate(5).name()}) from '${repository.getFullBranch()}'. No-FastForward: $noff"
 		
-		MergeCommand merge = git.merge().include(ref).setCommit(!message)
-		
-		if (noff) {
-			merge = merge.setFastForward(FastForwardMode.NO_FF)
+		if (!message) {
+			message = "Merge Branch '$branchName' into '${repository.getBranch()}'"
 		}
 
-		merge.call()
+		log.info "Merge Branch '$branchName' (${ref.abbreviate(5).name()}) into '${repository.getBranch()}'. No-FastForward: $noff"
+
+		final Git git = new Git(repository);
+		git.merge().include(ref).setCommit(!message).setFastForward(noff?FastForwardMode.NO_FF:FastForwardMode.FF).call();
+		
 
 		if (message) {
 			git.commit().setMessage(message).call();
