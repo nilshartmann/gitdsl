@@ -17,7 +17,7 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 		branches.feature = 'topic';
 	}
 	
-	//gf.startFeature 'FEATURE_001', commits: 4 
+	gf.startFeature 'FEATURE_001', commits: 4 
 	
 }
 

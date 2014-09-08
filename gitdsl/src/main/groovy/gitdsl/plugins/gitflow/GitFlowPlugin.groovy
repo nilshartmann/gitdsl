@@ -1,6 +1,7 @@
 package gitdsl.plugins.gitflow
 
 import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status
 import org.eclipse.jgit.lib.Constants;
 import org.eclipse.jgit.lib.RefUpdate
 
@@ -33,7 +34,7 @@ class GitFlowPlugin {
 		// Uebernommen von: https://bitbucket.org/atlassian/jgit-flow-defunct/src/fcb0d1f52b4379b3a906fdebec443bf875212da0/jgit-flow-core/src/main/java/com/atlassian/jgitflow/core/JGitFlowInitCommand.java?at=develop#cl-216
 		
 		log.info("Erzeuge GitFlow 'master'-Branch für Releases als '$branches.master'")
-		Git git = new Git(repositoryScript.repository);
+		Git git = newGit();
 		RefUpdate refUpdate = repositoryScript.repository.getRefDatabase().newUpdate(Constants.HEAD, false);
 		refUpdate.setForceUpdate(true);
 		refUpdate.link(Constants.R_HEADS + branches.master);
@@ -44,10 +45,40 @@ class GitFlowPlugin {
 		git.branchCreate().setName(branches.develop).call();
 	}
 	
+	def startFeature(Map args, String featureId) {
+		final String featureBranch = "${branches.feature}/$featureId"
+		final int commits = args.get('commits', 3);
+		assertWorkspaceClean();
+		
+		repositoryScript.checkout featureBranch;
+		repositoryScript.addFile "${featureId}_f1", path:'file1.txt'
+		repositoryScript.addFile "${featureId}_f2", path:'file2.txt'
+		repositoryScript.addFile "${featureId}_f3", path:'file3.txt'
+		
+		repositoryScript.commit("Initialer Commit on Feature $featureId")
+		
+		for (int i = 1; i <= commits; i++) {
+			repositoryScript.modifyFile("${featureId}_f1", content: "$i. Aenderung");
+			repositoryScript.commit("${i}. Commit on Feature $featureId")
+		}
+		
+	}
+	
+	private def assertWorkspaceClean() {
+		Git git = newGit();
+		Status status = git.status().call();
+		assert status.isClean();
+	}
+	
+	private Git newGit() {
+		return new Git(repositoryScript.repository);
+	}
+	
 	
 	def hello(String greeting='world') {
 		log.info("HELLO $greeting")
 	}
+	
 	
 
 }
