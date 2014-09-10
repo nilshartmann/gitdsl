@@ -27,6 +27,12 @@ class RepositoryScript {
 		this.repositoryRoot = repository.getDirectory().getParentFile();
 	}
 
+	/**
+	 * Registriert die Plug-in Klasse (pluginName) unter der übergebenen id
+	 * 
+	 * Die Klasse muss über den Classloader gefunden werden und muss einen Konstruktor haben,
+	 * dem diese RepositoryScript-Instanz übergeben wird
+	 */
 	def usePlugin(String id, String pluginName) {
 		log.info "Loading Plug-in '$pluginName' as $id"
 

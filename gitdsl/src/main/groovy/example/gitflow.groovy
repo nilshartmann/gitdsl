@@ -9,7 +9,7 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 	usePlugin 'gf', 'gitdsl.plugins.gitflow.GitFlowPlugin'
 
 	// Initiales Repository erzeugen. Muss als erstes passieren.
-	// In dem (optionalen) übergenem Closure kann die Default-Konfiguration angepasst werden
+	// In dem (optionalen) übergebenem Closure kann die Default-Konfiguration angepasst werden
 	gf.init {
 		// Git Flow Branches konfigurieren.
 		// Wenn nicht explizit konfiguriert, wird der GitFlow Standard verwendet
@@ -17,19 +17,28 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 		branches.feature = 'topic';
 	}
 
+	// startFeature erzeugt den Feature-Branch und eine Anzahl an Commits in file1
 	gf.startFeature 'F_001', commits: 4
 	gf.startFeature 'F_002', commits: 3
 	gf.startFeature 'F_003', commits: 3
 
+	// finishFeature mergt den Feature-Branch zurück auf 'develop' und löscht den Feature-Branch
+	// (um den Feature-Branch zu behalten als Argument removeBranch: false angeben)
 	gf.finishFeature 'F_002'
 	gf.finishFeature 'F_001'
 
-	gf.startRelease 'v_0.1' // <-- Was genau passiert hier, außer dass der Rel_Branch erzeugt wird?
+	// Beginnt mit der "codefreeze"-Phase für ein Release: erzeugt den release-Branch und modifiziert
+	// darauf die 'version.txt'-Datei
+	gf.startRelease 'v_0.1'
+
 	// Feature-Branches auf dem Release-Branch?
+	// Todo: weitere Commits auf einem Release-Branch erzeugen?!
 
 	gf.finishFeature 'F_003' // Feature wird es für 'nächstes' Release fertig
 
-	gf.finishRelease 'v_0.1' // no-ff merge auf 'master', merge release develop
+	// Schliesst das Release ab: no-ff merge auf 'master' und develop, sowie tag des master-Branches
+	gf.finishRelease 'v_0.1'
+
 
 	gf.startFeature 'F_004'
 
@@ -39,6 +48,7 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 	// Ein Hotfix für das erste Release erzeugen (TODO: Mergen in den release-Branch, wenn der gerade aktiv ist?)
 	gf.hotfix 'v_0.1.1', commits: 2
 
+	// enthält NICHT den Hotfix v_v0.1.1 ....
 	gf.finishRelease 'v_0.2'
 
 }
