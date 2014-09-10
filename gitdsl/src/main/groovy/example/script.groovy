@@ -1,5 +1,5 @@
 package example
-import gitdsl.GitRepository;
+import gitdsl.GitRepository
 
 // Neues Repository in /tmp/testrepo anlegen
 // ACHTUNG! Das Verzeichnis wird GELÖSCHT, wenn es schon vorhanden ist
@@ -30,6 +30,9 @@ Zeile3
 Ein anderer Inhalt
 '''
 	commit "Datei f1 geändert"
+	modifyFile 'f2', add: '''Zeile Neu-1
+Zeile Neu-2'''
+	commit "Datei f2 geändert"
 
 
 	checkout "master"
@@ -60,6 +63,6 @@ public class HalloWelt {
 	removeFile 'f1'
 	commit 'Datei World.java geloescht'
 	checkout 'master', mergeCurrentBranch: true
-			
+
 }
 

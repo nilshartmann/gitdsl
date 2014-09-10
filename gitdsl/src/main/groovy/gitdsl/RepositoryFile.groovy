@@ -1,8 +1,6 @@
 package gitdsl
 
-import groovy.util.logging.Log4j2;
-
-import java.io.File;
+import groovy.util.logging.Log4j2
 
 /**
  * Repräsentiert eine Datei im Repository, die im Rahmen des Setups angelegt wurde
@@ -11,31 +9,31 @@ import java.io.File;
  */
 @Log4j2
 class RepositoryFile {
-	
-	
+
+
 	final File repositoryRoot;
-	
+
 	/** Der relative Pfad (zum Repository-Root) der Datei */
 	String locationInRepository;
-	
+
 	/** Die Datei im Filesystem */
 	private File file
-	
+
 	RepositoryFile(File repositoryRoot, String locationInRepository, String initialContent = null) {
 		this.repositoryRoot = repositoryRoot;
-		
+
 		this.locationInRepository = removeLeadingSlash(locationInRepository);
 		this.file = createFile(locationInRepository);
-		
+
 		// (Leere) Datei anlegen
 		this.file.createNewFile();
-		
+
 		if (initialContent) {
 			writeContent initialContent;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Setzt den Inhalt dieser Datei
 	 */
@@ -43,8 +41,14 @@ class RepositoryFile {
 		if (content==null) {
 			content = "";
 		}
-		
+
 		file.text = content;
+
+		return this
+	}
+
+	def leftShift(Object text) {
+		file << text
 	}
 
 	/** Verschiebt die Datei an eine neue Position. Die neue Position kann ein neues
@@ -57,39 +61,39 @@ class RepositoryFile {
 	String moveTo(String newLocationInRepository, String newContent = null) {
 		final String oldLocationInRepo = this.locationInRepository;
 		final File oldFile = this.file;
-		
+
 		this.locationInRepository = removeLeadingSlash(locationInRepository);
 		this.file = createFile(locationInRepository);
-		
+
 		log.info "Move File '$oldLocationInRepo' to '$locationInRepository'"
-		
+
 		// Datei verschieben und ggf umbenennen
 		boolean fileMoved = oldFile.renameTo(file)
 		assert fileMoved
-		
+
 		if (newContent != null) {
 			writeContent(newContent)
 		}
-		
+
 		return oldLocationInRepo;
-		
+
 	}
-	
+
 	// ------------------------------------------------------------------------------------------
 	private static String removeLeadingSlash(String path) {
 		if (path.startsWith('/')) {
 			assert path.length() > 1
 			path = path.substring(1);
 		}
-		
+
 		return path;
 	}
-	
+
 	private File createFile(String locationInRepository) {
 		File newFile = new File(repositoryRoot, locationInRepository);
 		newFile.getParentFile().mkdirs();
-		
+
 		return newFile;
 	}
-	
+
 }

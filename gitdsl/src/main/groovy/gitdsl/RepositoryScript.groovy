@@ -1,17 +1,14 @@
 package gitdsl
 
-import java.io.File;
+import groovy.util.logging.Log4j2
 
-import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Git
 import org.eclipse.jgit.api.MergeCommand
-import org.eclipse.jgit.api.MergeCommand.FastForwardMode;
-import org.eclipse.jgit.internal.storage.file.FileRepository
+import org.eclipse.jgit.api.MergeResult
+import org.eclipse.jgit.api.MergeCommand.FastForwardMode
 import org.eclipse.jgit.lib.ObjectId
 import org.eclipse.jgit.lib.Repository
-
-import groovy.util.logging.Log;
-import groovy.util.logging.Log4j2;
-import groovy.util.logging.Slf4j;
+import org.eclipse.jgit.merge.MergeStrategy
 
 @Log4j2
 class RepositoryScript {
@@ -30,38 +27,37 @@ class RepositoryScript {
 		this.repository = repository;
 		this.repositoryRoot = repository.getDirectory().getParentFile();
 	}
-	
+
 	def usePlugin(String id, String pluginName) {
 		log.info "Loading Plug-in '$pluginName' as $id"
-		
+
 		final Class pluginClass = Class.forName(pluginName);
 		def plugin = pluginClass.newInstance(this)
 		plugins.put(id, plugin);
-		
 	}
-	
+
 	def propertyMissing(String propertyName) {
 		def plugin = plugins[propertyName];
-		
+
 		if (plugin == null) {
 			throw new IllegalStateException("Property '$propertyName' not found. Missing Plug-in import?");
 		}
-		
+
 		return plugin;
 	}
-	
-//	def methodMissing(String methodName, args) {
-//		log.error "METHOD '$methodName' missing with args: $args"
-//		
-//		for (plugin in plugins) {
-//			if (plugin.metaClass.respondsTo(plugin, methodName, args)) {
-//				return plugin.metaClass.invokeMethod(plugin,methodName, args);
-//			}
-//		}
-//		
-//		 throw new MissingMethodException(methodName, this.class, args)
-//		
-//	}
+
+	//	def methodMissing(String methodName, args) {
+	//		log.error "METHOD '$methodName' missing with args: $args"
+	//
+	//		for (plugin in plugins) {
+	//			if (plugin.metaClass.respondsTo(plugin, methodName, args)) {
+	//				return plugin.metaClass.invokeMethod(plugin,methodName, args);
+	//			}
+	//		}
+	//
+	//		 throw new MissingMethodException(methodName, this.class, args)
+	//
+	//	}
 
 	def addFile(Map args, String id=null) {
 
@@ -84,11 +80,20 @@ class RepositoryScript {
 		return repositoryFile
 	}
 
-	def modifyFile(Map args, String id) {
+	def modifyFile(Map args=new Hashtable(), String id) {
 		RepositoryFile repoFile = files[id];
 		assert repoFile;
 
-		repoFile.writeContent(args.content);
+		if (args.content) {
+			repoFile.writeContent(args.content);
+		}
+
+		if (args.add) {
+			repoFile << args.add
+			repoFile << RepositoryScript.ln
+		}
+
+		return repoFile;
 	}
 
 	def moveFile(Map args, String id) {
@@ -98,19 +103,19 @@ class RepositoryScript {
 		String locationInRepo = args.get('topath', '');
 		String content = args.get('content');
 
-		
-		
+
+
 		final oldLocationInRepo = repoFile.moveTo(locationInRepo, content)
-		
+
 
 		Git git = new Git(repository)
 		git.rm().addFilepattern(oldLocationInRepo).call();
 	}
-	
+
 	def removeFile(String id) {
 		RepositoryFile repoFile = files.remove(id);
 		assert repoFile;
-		
+
 		Git git = new Git(repository)
 		git.rm().addFilepattern(repoFile.locationInRepository).call();
 	}
@@ -146,8 +151,8 @@ class RepositoryScript {
 		final def refName = "refs/heads/" + branchName;
 		final boolean mergeCurrentBranch = args.get('mergeCurrentBranch');
 		final String currentBranch = repository.getBranch();
-		
-		
+
+
 		def createBranch = true;
 		for (branch in branches) {
 			if (refName == branch.getName()) {
@@ -155,15 +160,15 @@ class RepositoryScript {
 				break;
 			}
 		}
-		
+
 		log.info "${createBranch?'Erzeuge':'Aktiviere'} Branch '$branchName'. Orphan: $orphan"
-		
+
 		git.checkout().setCreateBranch(createBranch).setOrphan(orphan).setName(branchName).call();
 
-	
+
 		if (mergeCurrentBranch) {
 			merge(currentBranch, message: args.get('mergeCommitMessage'));
-		}	
+		}
 	}
 
 	/**
@@ -182,9 +187,12 @@ class RepositoryScript {
 	def merge(Map args=new Hashtable(), String branchName) {
 		String message = args.get('message');
 		boolean noff = args.get('noff', true);
+		MergeStrategy mergeStrategy = MergeStrategy.get(args.get('strategy', 'recursive'))
+		assert mergeStrategy
+
 
 		ObjectId ref = repository.resolve("refs/heads/$branchName")
-		
+
 		if (!message) {
 			message = "Merge Branch '$branchName' into '${repository.getBranch()}'"
 		}
@@ -192,8 +200,9 @@ class RepositoryScript {
 		log.info "Merge Branch '$branchName' (${ref.abbreviate(5).name()}) into '${repository.getBranch()}'. No-FastForward: $noff"
 
 		final Git git = new Git(repository);
-		git.merge().include(ref).setCommit(!message).setFastForward(noff?FastForwardMode.NO_FF:FastForwardMode.FF).call();
-		
+		MergeResult result = git.merge().setStrategy(mergeStrategy).
+				include(ref).setCommit(!message).setFastForward(noff?FastForwardMode.NO_FF:FastForwardMode.FF).call();
+		assert result.mergeStatus.successful
 
 		if (message) {
 			git.commit().setMessage(message).call();
