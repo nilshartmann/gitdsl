@@ -35,12 +35,11 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 
 	// ---- Nächster Releasezyklus, enthält zusätzlich F_003 aber nicht F_004
 	gf.startRelease 'v_0.2'
+
+	// Ein Hotfix für das erste Release erzeugen (TODO: Mergen in den release-Branch, wenn der gerade aktiv ist?)
+	gf.hotfix 'v_0.1.1', commits: 2
+
 	gf.finishRelease 'v_0.2'
-
-
-
-
-
 
 }
 

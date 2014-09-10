@@ -6,4 +6,5 @@ class GitFlowBranches {
 	String develop = 'develop'
 	String feature = 'feature'
 	String release = 'release'
+	String hotfix = 'hotfix'
 }

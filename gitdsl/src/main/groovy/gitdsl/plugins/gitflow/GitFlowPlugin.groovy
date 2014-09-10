@@ -72,6 +72,40 @@ class GitFlowPlugin {
 		featureIds.add featureId
 	}
 
+	def hotfix(Map args=new Hashtable(), String hotfixVersion) {
+
+		final String featureBranch = branchNameForHotfix(hotfixVersion);
+		final boolean removeBranch = args.get('removeBranch', true)
+		final int commits = args.get('commits', 1);
+		assertWorkspaceClean();
+
+		repositoryScript.checkout featureBranch, startPoint: branches.master
+		repositoryScript.addFile "${hotfixVersion}_f1", path:'file2.txt'
+
+		for (int i = 1; i <= commits; i++) {
+			repositoryScript.modifyFile "${hotfixVersion}_f1", add: "[Hotfix $hotfixVersion] $i. Aenderung";
+			repositoryScript.commit("${i}. Commit on Hotfix $hotfixVersion")
+		}
+
+		assertWorkspaceClean()
+
+		// Hotfix "abschliessen"
+		// Auf den 'release'-Branch mergen und taggen
+		repositoryScript.merge featureBranch, message: "Hotfix-Release $hotfixVersion"
+		repositoryScript.tag hotfixVersion
+
+		// Auf den 'develop'-Branch mergen
+		repositoryScript.checkout branches.develop, create: false
+		repositoryScript.merge featureBranch, message: "Hotfix-Release $hotfixVersion back into develop"
+
+		if (removeBranch) {
+			Git git = newGit();
+			git.branchDelete().setBranchNames(featureBranch).call();
+		}
+
+
+	}
+
 	def finishFeature(Map args = new Hashtable(), String featureId) {
 		assert featureIds.remove(featureId)
 		assertWorkspaceClean();
@@ -119,6 +153,12 @@ Start finishing Release ${releaseId}
 			Git git = newGit();
 			git.branchDelete().setBranchNames(branchNameForRelease(releaseId)).call();
 		}
+	}
+
+
+	private String branchNameForHotfix(String hotfixVersion) {
+		assert hotfixVersion
+		return "${branches.hotfix}/$hotfixVersion"
 	}
 
 	private String branchNameForRelease(String releaseId) {
