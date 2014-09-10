@@ -3,7 +3,6 @@ package gitdsl
 import groovy.util.logging.Log4j2
 
 import org.eclipse.jgit.api.Git
-import org.eclipse.jgit.api.MergeCommand
 import org.eclipse.jgit.api.MergeResult
 import org.eclipse.jgit.api.MergeCommand.FastForwardMode
 import org.eclipse.jgit.lib.ObjectId
@@ -90,7 +89,10 @@ class RepositoryScript {
 
 		if (args.add) {
 			repoFile << args.add
-			repoFile << RepositoryScript.ln
+
+			if (!args.add.endsWith(RepositoryScript.ln)) {
+				repoFile << RepositoryScript.ln
+			}
 		}
 
 		return repoFile;
@@ -138,6 +140,9 @@ class RepositoryScript {
 	 * 
 	 * <p>Mögliche Optionen (alle optional):
 	 * <ul>
+	 * <li>create</li>: false: branch wird nicht angelegt, wenn er noch nicht exisitert, gibt es einen Fehler 
+	 * (Default: true) 
+	 * <li>startPoint</li>: Legt fest, wo der neue Branch beginnen soll (default: HEAD)
 	 * <li>mergeCurrentBranch</li>: Mergt den aktuellen Branch nach dem auschecken des übergebenen Branches mit 'no-ff'
 	 * <li>mergeCommitMessage</li>: Commit-Message für den Merge, falls mergeCurrentBranch auf 'true' steht
 	 * </ul>
@@ -147,23 +152,28 @@ class RepositoryScript {
 	def checkout(Map args=new Hashtable(), String branchName) {
 		final Git git = new Git(repository);
 		final boolean orphan = args.get('orphan', false);
+		final String startPoint = args.get('startPoint', 'HEAD')
+		boolean createBranch = args.get('create', true)
 		final def branches = git.branchList().call()
 		final def refName = "refs/heads/" + branchName;
 		final boolean mergeCurrentBranch = args.get('mergeCurrentBranch');
 		final String currentBranch = repository.getBranch();
 
-
-		def createBranch = true;
-		for (branch in branches) {
-			if (refName == branch.getName()) {
-				createBranch = false;
-				break;
+		if (createBranch) {
+			// Prüfen, ob Branch angelegt werden muss
+			for (branch in branches) {
+				if (refName == branch.getName()) {
+					createBranch = false;
+					break;
+				}
 			}
 		}
 
-		log.info "${createBranch?'Erzeuge':'Aktiviere'} Branch '$branchName'. Orphan: $orphan"
+		log.info "${createBranch?'Erzeuge':'Aktiviere'} Branch '$branchName'. Start.Point: '$startPoint', orphan: $orphan."
 
-		git.checkout().setCreateBranch(createBranch).setOrphan(orphan).setName(branchName).call();
+		git.checkout().setCreateBranch(createBranch).
+				setStartPoint(startPoint).
+				setOrphan(orphan).setName(branchName).call();
 
 
 		if (mergeCurrentBranch) {
@@ -200,12 +210,20 @@ class RepositoryScript {
 		log.info "Merge Branch '$branchName' (${ref.abbreviate(5).name()}) into '${repository.getBranch()}'. No-FastForward: $noff"
 
 		final Git git = new Git(repository);
-		MergeResult result = git.merge().setStrategy(mergeStrategy).
-				include(ref).setCommit(!message).setFastForward(noff?FastForwardMode.NO_FF:FastForwardMode.FF).call();
+		MergeResult result = git
+				.merge()
+				.setStrategy(mergeStrategy)
+				.include(ref)
+				.setCommit(false)
+				.setFastForward(noff?FastForwardMode.NO_FF:FastForwardMode.FF)
+				.call();
 		assert result.mergeStatus.successful
 
-		if (message) {
-			git.commit().setMessage(message).call();
-		}
+		return git.commit().setMessage(message).call();
+	}
+
+	def tag(Map args=new Hashtable(), String tagName) {
+		Git git = new Git(repository);
+		git.tag().setName(tagName).call();
 	}
 }

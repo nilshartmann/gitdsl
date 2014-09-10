@@ -40,23 +40,24 @@ class GitFlowPlugin {
 		RefUpdate refUpdate = repositoryScript.repository.getRefDatabase().newUpdate(Constants.HEAD, false);
 		refUpdate.setForceUpdate(true);
 		refUpdate.link(Constants.R_HEADS + branches.master);
-		git.commit().setMessage("Initial Commit").call();
+
+		repositoryScript.addFile 'README_FILE', path: 'README.txt', content: '''Initiales Readme-File
+'''
+		repositoryScript.commit 'Initial Commit'
 
 		// Initialen 'develop'-Branch anlegen
 		log.info("Erzeuge GitFlow 'develop'-Branch für die Entwicklung als '$branches.develop'");
 		git.branchCreate().setName(branches.develop).call();
 	}
 
-	def startFeature(Map args, String featureId) {
+	def startFeature(Map args=new Hashtable(), String featureId) {
 		assert !featureIds.contains(featureId)
 
 		final String featureBranch = branchNameForFeature(featureId);
 		final int commits = args.get('commits', 3);
 		assertWorkspaceClean();
 
-		Git git = newGit();
-		git.branchCreate().setName(featureBranch).setStartPoint(branches.develop).call()
-		repositoryScript.checkout featureBranch
+		repositoryScript.checkout featureBranch, startPoint: branches.develop
 		repositoryScript.addFile "${featureId}_f1", path:'file1.txt'
 		repositoryScript.addFile "${featureId}_f2", path:'file2.txt'
 		repositoryScript.addFile "${featureId}_f3", path:'file3.txt'
@@ -80,13 +81,49 @@ class GitFlowPlugin {
 		log.info "Finishing Feature '$featureId'"
 
 		final String featureBranch = branchNameForFeature(featureId);
-		repositoryScript.checkout branches.develop;
+		repositoryScript.checkout branches.develop, create: false;
 		repositoryScript.merge featureBranch, message: "Finish Feature $featureId", strategy: 'theirs'
 
 		if (removeBranch) {
 			Git git = newGit();
 			git.branchDelete().setBranchNames(featureBranch).call();
 		}
+	}
+
+	def startRelease(Map args=new Hashtable(), String releaseId) {
+		assertWorkspaceClean()
+
+		repositoryScript.checkout branchNameForRelease(releaseId), startPoint: branches.develop;
+
+		repositoryScript.modifyFile 'README_FILE', add: """\
+Start finishing Release ${releaseId}
+"""
+		repositoryScript.commit "Start finishing Release $releaseId"
+	}
+
+	def finishRelease(Map args=new Hashtable(), String releaseId) {
+		assertWorkspaceClean()
+		boolean removeBranch = args.get('removeBranch', true)
+
+		repositoryScript.checkout branches.master, create: false
+
+		// Auf den 'release'-Branch mergen und taggen
+		repositoryScript.merge branchNameForRelease(releaseId), message: "Release $releaseId"
+		repositoryScript.tag releaseId
+
+		// Auf den 'develop'-Branch mergen
+		repositoryScript.checkout branches.develop, create: false
+		repositoryScript.merge branchNameForRelease(releaseId), message: "Release $releaseId back into develop"
+
+		if (removeBranch) {
+			Git git = newGit();
+			git.branchDelete().setBranchNames(branchNameForRelease(releaseId)).call();
+		}
+	}
+
+	private String branchNameForRelease(String releaseId) {
+		assert releaseId
+		return "${branches.release}/$releaseId"
 	}
 
 

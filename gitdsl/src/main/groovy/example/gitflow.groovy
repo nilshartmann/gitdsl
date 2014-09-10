@@ -13,7 +13,7 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 	gf.init {
 		// Git Flow Branches konfigurieren.
 		// Wenn nicht explizit konfiguriert, wird der GitFlow Standard verwendet
-		branches.master = 'releases';
+		branches.master = 'prod';
 		branches.feature = 'topic';
 	}
 
@@ -24,8 +24,19 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 	gf.finishFeature 'F_002'
 	gf.finishFeature 'F_001'
 
-	// gf.startRelease 'v_0.1' // <-- Was genau passiert hier, außer dass der Rel_Branch erzeugt wird?
-	// gf.finishRelease 'v_0.1' // no-ff merge auf 'master', merge release develop
+	gf.startRelease 'v_0.1' // <-- Was genau passiert hier, außer dass der Rel_Branch erzeugt wird?
+	// Feature-Branches auf dem Release-Branch?
+
+	gf.finishFeature 'F_003' // Feature wird es für 'nächstes' Release fertig
+
+	gf.finishRelease 'v_0.1' // no-ff merge auf 'master', merge release develop
+
+	gf.startFeature 'F_004'
+
+	// ---- Nächster Releasezyklus, enthält zusätzlich F_003 aber nicht F_004
+	gf.startRelease 'v_0.2'
+	gf.finishRelease 'v_0.2'
+
 
 
 
