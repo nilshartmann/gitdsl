@@ -11,6 +11,7 @@ import org.eclipse.jgit.lib.RefUpdate
 @Log4j2
 class GitFlowPlugin {
 
+	final static String VERSION_TXT = 'VERSION.txt'
 	private final RepositoryScript repositoryScript;
 	private boolean initialized = false;
 	private final List featureIds = []
@@ -41,8 +42,7 @@ class GitFlowPlugin {
 		refUpdate.setForceUpdate(true);
 		refUpdate.link(Constants.R_HEADS + branches.master);
 
-		repositoryScript.addFile 'README_FILE', path: 'README.txt', content: '''Initiales Readme-File
-'''
+		repositoryScript.addFile VERSION_TXT, path: VERSION_TXT, content: 'No Release yet'
 		repositoryScript.commit 'Initial Commit'
 
 		// Initialen 'develop'-Branch anlegen
@@ -129,9 +129,7 @@ class GitFlowPlugin {
 
 		repositoryScript.checkout branchNameForRelease(releaseId), startPoint: branches.develop;
 
-		repositoryScript.modifyFile 'README_FILE', add: """\
-Start finishing Release ${releaseId}
-"""
+		repositoryScript.modifyFile VERSION_TXT, content: "Release ${releaseId}"
 		repositoryScript.commit "Start finishing Release $releaseId"
 	}
 
