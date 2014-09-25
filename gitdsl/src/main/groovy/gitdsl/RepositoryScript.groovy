@@ -74,7 +74,7 @@ class RepositoryScript {
 		assert ! files[id]
 
 		final String locationInRepo = args.get('path', '');
-		final String content = args.get('content', "Line1${ln}Line2${ln}Line3");
+		final String content = args.get('content', "Line1${ln}Line2${ln}Line3${ln}");
 
 		log.info "Create File '$locationInRepo' with id '$id'"
 
@@ -99,6 +99,10 @@ class RepositoryScript {
 			if (!args.add.endsWith(RepositoryScript.ln)) {
 				repoFile << RepositoryScript.ln
 			}
+		}
+
+		if (!args.content && !args.add) {
+			repoFile << "A new line%n"
 		}
 
 		return repoFile;
@@ -132,7 +136,7 @@ class RepositoryScript {
 		commitCount++;
 
 		if (!message) {
-			message = "Commit No $commitCount";
+			message = "[${repository.branch}] Commit No $commitCount";
 		}
 
 		Git git = new Git(repository);
