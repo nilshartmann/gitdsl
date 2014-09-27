@@ -1,4 +1,4 @@
-package example
+package scripts.example
 import gitdsl.GitRepository
 
 // Neues Repository in /tmp/testrepo anlegen
