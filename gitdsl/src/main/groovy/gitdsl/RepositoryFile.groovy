@@ -42,6 +42,10 @@ class RepositoryFile {
 			content = "";
 		}
 
+		if (!content.endsWith('\n')) {
+			content = "$content\n"
+		}
+
 		file.text = content;
 
 		return this
