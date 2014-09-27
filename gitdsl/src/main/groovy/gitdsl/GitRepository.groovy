@@ -64,7 +64,7 @@ class GitRepository {
 	/**
 	 * Kopiert dieses Repository in ein neues Bare-Repository an der angegebenen Stelle
 	 */
-	def createAsBareAt(String targetPath) {
+	def createAsBareAt(Map args = new Hashtable(), String targetPath) {
 		log.info("Create a bare repository to $targetPath");
 
 		File directory = new File(targetPath);
@@ -105,6 +105,13 @@ class GitRepository {
 		newRepository.getConfig().setBoolean("core", null, "bare", true);
 		newRepository.getConfig().save();
 		newRepository.close();
+
+		if (args.deleteSource) {
+			File sourceRepoDir = repository.directory.parentFile;
+			log.info "Delete source repository from ${sourceRepoDir}"
+			repository.close();
+			sourceRepoDir.deleteDir();
+		}
 
 		return this;
 	}
