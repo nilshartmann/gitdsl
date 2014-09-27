@@ -191,6 +191,13 @@ class RepositoryScript {
 		}
 	}
 
+	def deleteBranches(String... branchNames) {
+		assert branchNames
+
+		Git git = new Git(repository);
+		git.branchDelete().setBranchNames(branchNames).setForce(false).call();
+	}
+
 	/**
 	 * Mergt den angegebenen Branch in den aktuellen Branch. Per Default wird der Merge
 	 * mit 'no-ff' ausgeführt, so dass ein Merge Commit entsteht.
