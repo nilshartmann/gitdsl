@@ -75,29 +75,8 @@ class GitRepository {
 			directory.delete()
 		}
 
-		FileSystem fs = FileSystems.getDefault();
+		Utils.copyDirectory(repository.getDirectory().getAbsolutePath(), targetPath);
 
-		Path tp = fs.getPath(targetPath);
-		Path sourcePath =  fs.getPath(repository.getDirectory().getAbsolutePath());
-
-
-		Files.walkFileTree(sourcePath, new SimpleFileVisitor<Path>() {
-					@Override
-					public FileVisitResult preVisitDirectory(final Path dir,
-							final BasicFileAttributes attrs) throws IOException {
-						Files.createDirectories(tp.resolve(sourcePath
-								.relativize(dir)));
-						return FileVisitResult.CONTINUE;
-					}
-
-					@Override
-					public FileVisitResult visitFile(final Path file,
-							final BasicFileAttributes attrs) throws IOException {
-						Files.copy(file,
-								tp.resolve(sourcePath.relativize(file)));
-						return FileVisitResult.CONTINUE;
-					}
-				});
 
 
 		// https://git.wiki.kernel.org/index.php/GitFaq#How_do_I_make_existing_non-bare_repository_bare.3F
