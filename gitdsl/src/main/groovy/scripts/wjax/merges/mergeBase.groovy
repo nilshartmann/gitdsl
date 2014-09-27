@@ -1,5 +1,5 @@
 //
-package scripts.wjax
+package scripts.wjax.merges
 import gitdsl.GitRepository
 
 def commits(gitdsl.RepositoryScript gs, String branch) {
