@@ -10,10 +10,24 @@ import java.nio.file.attribute.BasicFileAttributes
 
 class Utils {
 
+	static void deleteDirectory(String path) {
+		assert path;
+
+		File directory = new File(path);
+		if (directory.isDirectory()) {
+			assert directory.deleteDir();
+		}
+	}
+
 	static File recreateFile(String path) {
 		assert path;
 
 		File file = new File(path);
+
+		return recreateFile(file);
+	}
+
+	static File recreateFile(File file) {
 
 		if (!file.exists()) {
 			if (!file.getParentFile().exists()) {

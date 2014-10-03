@@ -174,8 +174,17 @@ Utils.recreateFile("$BASE_DIR/beispiel_03_mergeConflict.txt") << """
 
 	# Gestaged
 	git status
+
+	# Merge abschliessen
+	git commit
+
 	
-	
+
+	# ggf git rerere
+
+
+	TODO: conflictstyle ... dabei auch die Konfliktmarker erklären
+	TODO: 
 
 
 	# Files anzeigen: 3 Stueck ???

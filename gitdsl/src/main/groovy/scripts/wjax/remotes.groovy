@@ -1,21 +1,17 @@
 //
 package scripts.wjax
 import gitdsl.GitRepository
+import gitdsl.Utils;
 
-final def BASE_DIR='/Users/nils/develop/wjax2014_git_workshop/uebungen/remotes';
+final def BASE_DIR=WJaxUtils.baseDir 'remotes', true;
 
-final def LOKALES_REPO="${BASE_DIR}/lokalesRepo"
+
+final def LOKALES_REPO_EINS="${BASE_DIR}/lokalesRepo"
 final def REMOTE_REPO_EINS="${BASE_DIR}/remoteRepoEins.git"
 
-final beispielTxt = new File("$BASE_DIR/beispiele.txt");
-if (beispielTxt.exists()) {
-	beispielTxt.delete();
-}
+final beispielTxt = Utils.recreateFile("$BASE_DIR/beispiele.txt");
 
 beispielTxt << """
-SZENARIO 1: Klonen und Remote untersuchen
-
-
 Lokales Repository erzeugen
   cd $BASE_DIR
   git clone file:///${REMOTE_REPO_EINS} eins
@@ -31,8 +27,73 @@ Lokales Repository erzeugen
   # Remote-Status anzeigen 1 ahead
   git branch -vv
 
-  # git config --get-regexp push.*
+	# Ein Tag erzeugen
+	git tag UEBUNG_1
 
+	git push
+	# ==> Push-Ausgabe analysieren: keine Tags :-(
+	git ls-remote origin
+	# ==> ebenfalls kein neuer Tag
+
+    # Tag pushen
+	git push origin UEBUNG_1
+
+
+	# In ZWEITES Repository wechseln
+	cd cd $BASE_DIR/zwei
+
+	# Pullen
+	git pull
+
+	# => Kein neuer Tag
+	git ls-remote
+	
+	git fetch --tags
+	# oder:
+	git fetch origin refs/tags/*:refs/tags/*
+
+
+##### ZWEITER TEIL: PUSH-SPEC
+	# Neuen Feature-Branch anlegen
+	git checkout -b features/f4
+
+	# Etwas aendern und committen
+	echo "fsadfasd" >>readme.txt
+	git commit -m "Readme fuer Feature 4 angepasst" readme.txt
+
+	# Push => Fehlermeldung
+	git push
+
+	# Upstream-Branch über zwei Möglichkeiten
+	
+	
+
+	# push.default zeigen:
+  	git config --get-regexp push.*
+
+	# ->> 'simple'
+	# was bedeutet das? 
+	#   nur der aktive Branch wird 
+	
+
+
+"""
+
+
+Utils.deleteDirectory("$BASE_DIR/eins");
+Utils.deleteDirectory("$BASE_DIR/zwei");
+
+final cloneZweiMal = Utils.recreateFile("$BASE_DIR/clone-zweimal.sh");
+cloneZweiMal.setExecutable(true);
+cloneZweiMal << """#!/bin/bash
+
+cd $BASE_DIR
+
+  rm -r eins
+  rm -r zwei
+
+  git clone file:///${REMOTE_REPO_EINS} eins
+  git clone file:///${REMOTE_REPO_EINS} zwei
 
 """
 
@@ -51,11 +112,8 @@ GitRepository.recreateAt("${REMOTE_REPO_EINS}.tmp").setup {
 	commits delegate, 'integration'
 	tag 'BUILD_1'
 	commits delegate, 'features/f1'
-	tag 'BUILD_2'
 	commits delegate, 'features/f2'
-	tag 'BUILD_3'
 	commits delegate, 'features/f3'
-	tag 'BUILD_4'
 
 	checkout 'master', create: false
 }.createAsBareAt("${REMOTE_REPO_EINS}", deleteSource: true)
