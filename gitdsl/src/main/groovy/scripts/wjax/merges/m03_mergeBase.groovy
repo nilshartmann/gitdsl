@@ -2,33 +2,18 @@
 package scripts.wjax.merges
 import java.util.Map;
 
-import scripts.wjax.WJaxUtils;
+import static scripts.wjax.WJaxUtils.*
 import gitdsl.GitRepository
 import gitdsl.Utils;
 
 
-final Map branchCommitMap = new Hashtable<String, Integer>();
 
-def commits(Map args = new Hashtable(), gitdsl.RepositoryScript gs, String branch) {
-	gs.checkout branch;
-	final int commits = args.get('commits', 3);
-
-	for (int i=1;i<(commits+1);i++) {
-		int commitCount = gs.counter.next("commits_on_branch_$branch")
-		String line = "$branch: $commitCount. Commit"
-		gs.modifyFile 'f1', add: line; gs.commit line;
-	}
+final def BASE_DIR=MERGES_BASE_DIR;
 
 
-}
-
-final def BASE_DIR=WJaxUtils.baseDir 'merges/merge-base', true;
-
-
-
-final beispielTxt = Utils.recreateFile("$BASE_DIR/beispiel_01.txt");
+final beispielTxt = Utils.recreateFile("$BASE_DIR/beispiel_03_merge-base.txt");
 beispielTxt << """
-  cd $BASE_DIR/merge-base
+  cd $BASE_DIR/03_merge-base
   
 	# history zeigen
 
@@ -44,7 +29,7 @@ beispielTxt << """
 
 """
 
-GitRepository.recreateAt("$BASE_DIR/merge-base").setup {
+GitRepository.recreateAt("$BASE_DIR/03_merge-base").setup {
 
 	usePlugin 'counter', 'gitdsl.plugins.misc.CounterPlugin'
 
@@ -67,7 +52,7 @@ GitRepository.recreateAt("$BASE_DIR/merge-base").setup {
 	commits delegate, 'feature-1'
 }
 
-GitRepository.recreateAt("$BASE_DIR/merge-base-complex").setup {
+GitRepository.recreateAt("$BASE_DIR/03_merge-base-complex").setup {
 
 	usePlugin 'counter', 'gitdsl.plugins.misc.CounterPlugin'
 

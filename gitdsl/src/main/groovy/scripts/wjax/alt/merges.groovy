@@ -1,7 +1,8 @@
 //
-package scripts.wjax.merges
+package scripts.wjax.alt
 import java.nio.file.Files;
 
+import scripts.wjax.WJaxUtils;
 import gitdsl.GitRepository
 import gitdsl.Utils;
 
@@ -48,24 +49,12 @@ SZENARIO 1: FF-MERGE
 	# ggf. zwei weitere Branches anlegen und -ff-only zeigen
 
 """
-
 def commits(Map args = new Hashtable(), gitdsl.RepositoryScript gs, String branch) {
-	gs.checkout branch, startPoint: 'master';
-
-	final int commits = args.get('commits', 3);
-
-	for (int i=1;i<(commits+1);i++) {
-		gs.modifyFile 'f1', content: args.content; gs.commit "$branch: $i. Commit";
-	}
-
-
-	String mergeTo = args.get("mergeTo");
-	if (mergeTo) {
-		gs.checkout mergeTo
-		gs.merge branch, message: "Finished $branch: '$args.subject' (Merged into $mergeTo)"
-
-	}
+	args.put('startPoint', 'master');
+	WJaxUtils.commits(args, gs, branch);
 }
+
+
 
 GitRepository.recreateAt("${LOKALES_REPO}").setup {
 	// Initialer Commit
