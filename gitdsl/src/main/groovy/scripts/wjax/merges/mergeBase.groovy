@@ -1,54 +1,97 @@
 //
 package scripts.wjax.merges
+import java.util.Map;
+
+import scripts.wjax.WJaxUtils;
 import gitdsl.GitRepository
+import gitdsl.Utils;
 
-def commits(gitdsl.RepositoryScript gs, String branch) {
+
+final Map branchCommitMap = new Hashtable<String, Integer>();
+
+def commits(Map args = new Hashtable(), gitdsl.RepositoryScript gs, String branch) {
 	gs.checkout branch;
-	gs.modifyFile 'f1'; gs.commit();
-	gs.modifyFile 'f1'; gs.commit();
-	gs.modifyFile 'f1'; gs.commit();
+	final int commits = args.get('commits', 3);
+
+	for (int i=1;i<(commits+1);i++) {
+		int commitCount = gs.counter.next("commits_on_branch_$branch")
+		String line = "$branch: $commitCount. Commit"
+		gs.modifyFile 'f1', add: line; gs.commit line;
+	}
+
+
 }
 
-// Neues Repository in /tmp/testrepo anlegen
-// ACHTUNG! Das Verzeichnis wird GELÖSCHT, wenn es schon vorhanden ist
-GitRepository.recreateAt("/Users/nils/develop/wjax2014_git_workshop/uebungen/merge-base/simple").setup {
+final def BASE_DIR=WJaxUtils.baseDir 'merges/merge-base', true;
+
+
+
+final beispielTxt = Utils.recreateFile("$BASE_DIR/beispiel_01.txt");
+beispielTxt << """
+  cd $BASE_DIR/merge-base
+  
+	# history zeigen
+
+   git merge-base HEAD master
+	
+   git tag --points-at \$(git merge-base HEAD master)
+
+	# oder:
+    # git show-ref --tags
+
+   # Was ist auf dem Topic-Branch veraendet seit der Merge Base?
+   git diff \$(git merge-base HEAD master)
+
+"""
+
+GitRepository.recreateAt("$BASE_DIR/merge-base").setup {
+
+	usePlugin 'counter', 'gitdsl.plugins.misc.CounterPlugin'
 
 	// Initialer Commit
-	addFile 'f1', path: 'readme.txt'
+	addFile 'f1', path: 'readme.txt', content: "readme.txt, initial Version\n\n"
 	commit 'Initial Import'
 
-	commits delegate, 'master';
+	commits delegate, 'master', commits: 2;
+	tag 'ERWARTETE_MERGE_BASE', annotated: false
 
 	// Feature Branch
-	tag 'DAS_GESUCHTE_COMMIT'
+	commits delegate, 'feature-1'
+
+
+	// Noch mehr Commits auf dem Master
+	commits delegate, 'master', commits: 4
+
+
+	// Commits auf feature-1
+	commits delegate, 'feature-1'
+}
+
+GitRepository.recreateAt("$BASE_DIR/merge-base-complex").setup {
+
+	usePlugin 'counter', 'gitdsl.plugins.misc.CounterPlugin'
+
+	// Initialer Commit
+	addFile 'f1', path: 'readme.txt', content: "readme.txt, initial Version\n\n"
+	commit 'Initial Import'
+
+	commits delegate, 'master', commits: 2;
+
+
+	// Feature Branch
 	commits delegate, 'feature-1'
 
 	// Noch mehr Commits auf dem Master
-	commits delegate, 'master'
-}
+	commits delegate, 'master', commits: 4
+	tag 'ERWARTETE_MERGE_BASE', annotated: false
 
-GitRepository.recreateAt("/Users/nils/develop/wjax2014_git_workshop/uebungen/merge-base/two-merges").setup {
-	// Initialer Commit
-	addFile 'f1', path: 'readme.txt'
-	commit 'Initial Import'
-
-	commits delegate, 'master';
-
-	// Feature Branch
-	commits delegate, 'feature-1'
+	checkout 'feature-1', create:false
+	merge 'master', strategy:'ours'
 
 	// Noch mehr Commits auf dem Master
-	commits delegate, 'master'
-	tag 'DAS_GESUCHTE_COMMIT'
+	commits delegate, 'master', commits: 4
 
-	// Mit Master aktualisieren
-	checkout 'feature-1'
-	merge 'master', message: 'Update from master'
 
+	// Commits auf feature-1
 	commits delegate, 'feature-1'
-
-	commits delegate, 'master'
-
-	// cd ../two-merges && git tag --points-at `git merge-base master feature-1`
-
 }

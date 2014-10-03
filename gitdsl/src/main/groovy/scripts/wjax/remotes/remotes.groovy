@@ -1,5 +1,6 @@
 //
-package scripts.wjax
+package scripts.wjax.remotes
+import scripts.wjax.WJaxUtils;
 import gitdsl.GitRepository
 import gitdsl.Utils;
 

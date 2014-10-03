@@ -35,6 +35,7 @@ class RepositoryScript {
 	 */
 	def usePlugin(String id, String pluginName) {
 		log.info "Loading Plug-in '$pluginName' as $id"
+		assert !plugins.containsKey(id), "Plugin with id $id already registered"
 
 		final Class pluginClass = Class.forName(pluginName);
 		def plugin = pluginClass.newInstance(this)
@@ -240,7 +241,10 @@ class RepositoryScript {
 	}
 
 	def tag(Map args=new Hashtable(), String tagName) {
+		// Annotated? Default: true
+		boolean annotated = args.get('annotated', true);
+
 		Git git = new Git(repository);
-		git.tag().setName(tagName).call();
+		git.tag().setName(tagName).setAnnotated(annotated).call();
 	}
 }

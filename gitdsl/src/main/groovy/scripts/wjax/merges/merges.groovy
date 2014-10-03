@@ -191,11 +191,6 @@ Utils.recreateFile("$BASE_DIR/beispiel_03_mergeConflict.txt") << """
 	git ls-files 
 	git ls-files --stage
 
-
-
-	
-
-
 """
 GitRepository.recreateAt("${CONFLICT_REPO}").setup {
 	// Initialer Commit

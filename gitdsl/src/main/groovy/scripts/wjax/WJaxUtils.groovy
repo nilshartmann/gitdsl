@@ -26,4 +26,6 @@ class WJaxUtils {
 
 		return theDir;
 	}
+
+	public final static String MERGES_DIR = BASE_DIR + "/merges";
 }
