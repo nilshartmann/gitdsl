@@ -10,10 +10,12 @@ def ALL_SCRIPTS = [
 	'merges.m03_mergeBase',
 	'merges.m04_conflicts',
 	// remotes
-	'remotes.remotes'
+	'remotes.r01_remotes',
+	'remotes.r02_refspecs'
 ];
 
 Utils.deleteDirectory WJaxUtils.REMOTES_BASE_DIR
+Utils.deleteDirectory WJaxUtils.REFSPECS_BASE_DIR
 Utils.deleteDirectory WJaxUtils.MERGES_BASE_DIR
 
 

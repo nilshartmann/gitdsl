@@ -5,33 +5,11 @@ import gitdsl.GitRepository
 import gitdsl.Utils;
 
 
-final def LOKALES_REPO_EINS="${REMOTES_BASE_DIR}/lokalesRepo"
-final def REMOTE_REPO_EINS="${REMOTES_BASE_DIR}/remoteRepoEins.git"
-
-final beispielRemotesTxt = Utils.recreateFile("$REMOTES_BASE_DIR/beispiel_01_remotes.txt");
-
-beispielRemotesTxt << """
-# Neues - leeres - Repository erzeugen
-
-mkdir lokal
-cd lokal
-
-git init .
+final def LOKALES_REPO_EINS="${REFSPECS_BASE_DIR}/lokalesRepo"
+final def REMOTE_REPO_EINS="${REFSPECS_BASE_DIR}/remoteRepoEins.git"
 
 
-git remote add origin file://${REMOTE_REPO_EINS}
-
-git ls-remote origin
-git branch -vv
-
-git fetch
-
-git checkout integration
-
-
-"""
-
-final pushBeispiel = Utils.recreateFile("$REMOTES_BASE_DIR/beispiel_02_push.txt")
+final pushBeispiel = Utils.recreateFile("$REFSPECS_BASE_DIR/beispiel_02_push.txt")
 pushBeispiel << """
 	
 	# [Eins] Neuen Feature-Branch anlegen
@@ -89,7 +67,7 @@ pushBeispiel << """
 
 """
 
-final refspecBeispielTxt = Utils.recreateFile("$REMOTES_BASE_DIR/beispiel_03_refspec.txt")
+final refspecBeispielTxt = Utils.recreateFile("$REFSPECS_BASE_DIR/beispiel_03_refspec.txt")
 refspecBeispielTxt << """
 [Eins]
 git checkout features/feature-3
@@ -142,7 +120,7 @@ git fetch --prune
 """
 
 
-final pushForceBeispiel = Utils.recreateFile("$REMOTES_BASE_DIR/beispiel_04_push-force.txt")
+final pushForceBeispiel = Utils.recreateFile("$REFSPECS_BASE_DIR/beispiel_04_push-force.txt")
 pushForceBeispiel << """
 	
 
@@ -158,14 +136,14 @@ pushForceBeispiel << """
 
 
 
-Utils.deleteDirectory("$REMOTES_BASE_DIR/eins");
-Utils.deleteDirectory("$REMOTES_BASE_DIR/zwei");
+Utils.deleteDirectory("$REFSPECS_BASE_DIR/eins");
+Utils.deleteDirectory("$REFSPECS_BASE_DIR/zwei");
 
-final cloneZweiMal = Utils.recreateFile("$REMOTES_BASE_DIR/clone-zweimal.sh");
+final cloneZweiMal = Utils.recreateFile("$REFSPECS_BASE_DIR/clone-zweimal.sh");
 cloneZweiMal.setExecutable(true);
 cloneZweiMal << """#!/bin/bash
 
-cd $REMOTES_BASE_DIR
+cd $REFSPECS_BASE_DIR
 
   rm -rf eins
   rm -rf zwei

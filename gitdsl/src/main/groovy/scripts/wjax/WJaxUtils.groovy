@@ -61,4 +61,5 @@ class WJaxUtils {
 
 	final static String MERGES_BASE_DIR = baseDir("merges");
 	final static String REMOTES_BASE_DIR = baseDir("remotes");
+	final static String REFSPECS_BASE_DIR = baseDir("refspecs");
 }
