@@ -5,12 +5,11 @@ import java.util.Map;
 import groovy.util.logging.Log4j2;
 
 @Log4j2
-
 class WJaxUtils {
 
 	private final static boolean ENABLE_DELETE = false;
 
-	private final static String BASE_DIR='/Users/nils/develop/wjax2014_git_workshop/uebungen';
+	private final static String BASE_DIR='/Users/nils/develop/wjax2014_git_workshop/beispiele';
 
 	final static String baseDir(String name) {
 		assert name;
@@ -40,6 +39,8 @@ class WJaxUtils {
 
 			if (args.content) {
 				gs.modifyFile 'f1', content: args.content; gs.commit line;
+			} else if (args.add) {
+				gs.modifyFile 'f1', add: args.add; gs.commit line;
 			} else {
 				gs.modifyFile 'f1', add: line; gs.commit line;
 			}
@@ -59,4 +60,5 @@ class WJaxUtils {
 	}
 
 	final static String MERGES_BASE_DIR = baseDir("merges");
+	final static String REMOTES_BASE_DIR = baseDir("remotes");
 }

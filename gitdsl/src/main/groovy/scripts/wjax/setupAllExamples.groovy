@@ -4,12 +4,16 @@ import scripts.wjax.WJaxUtils
 final String BASE_PACKAGE = 'scripts.wjax';
 
 def ALL_SCRIPTS = [
+	// merges
 	'merges.m01_fastforward',
 	'merges.m02_fphistory',
 	'merges.m03_mergeBase',
-	'merges.m04_conflicts'
+	'merges.m04_conflicts',
+	// remotes
+	'remotes.remotes'
 ];
 
+Utils.deleteDirectory WJaxUtils.REMOTES_BASE_DIR
 Utils.deleteDirectory WJaxUtils.MERGES_BASE_DIR
 
 

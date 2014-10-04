@@ -242,7 +242,7 @@ class RepositoryScript {
 
 	def tag(Map args=new Hashtable(), String tagName) {
 		// Annotated? Default: true
-		boolean annotated = args.get('annotated', true);
+		boolean annotated = args.get('annotated', false);
 
 		Git git = new Git(repository);
 		git.tag().setName(tagName).setAnnotated(annotated).call();
