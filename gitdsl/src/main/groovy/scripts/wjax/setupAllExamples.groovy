@@ -7,6 +7,7 @@ def ALL_SCRIPTS = [
 	// merges
 	'merges.m10_fastforward',
 	'merges.m20_fphistory',
+	'merges.m25_squash',
 	'merges.m30_mergeBase',
 	'merges.m40_conflicts',
 	// remotes
