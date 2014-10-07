@@ -99,12 +99,16 @@ GitRepository.recreateAt("${CONFLICT_REPO}").setup {
 	// Initialer Commit
 	addFile 'f1', path: 'readme.txt', content: "Dieses ist die initiale Readme-Datei\nDa es in diesem Stadium noch keine Features gibt,ist sie leer\n"
 	addFile 'f2', path: 'install.txt', content: 'Dieses wird die Installationsanleitung'
+	addFile 'f3', path: 'version.txt', content: '0.1'
 	commit 'Initial Import'
 
 	commits delegate, 'feature-1', commits: 1, content: "Dieses ist die erstmals angepasste Readme-Datei\nBeschreibung von feature-1:\nDieses brandneue Feature erlaubt es Ihnen, noch besser mit unserer Software zu arbeiten."
+	addFile 'contrib', path: 'contributors.txt', content: 'John Doe et al'; commit "Contributors-Datei hinzugefuegt"
+
 	commits delegate, 'feature-2', commits: 1, content: "Dieses ist die Readme-Datei\nSie beschreibt alle Features Ihres gekauften Produktes\n\nNeu! feature-2:\nJetzt ist unser Tool noch besser.\nSie sollten es unbedingt sofort installieren und testen."
 	modifyFile 'f2', add: 'Zur Installation gehen Sie wie folgt vor:\n\n 1. Lorem\n 2. Ipsum\n 3.Dolor sit amend'; commit "feature-2: install.txt erweitert"
-	addFile 'f3', path: 'version.txt', content: 'Version 2'; commit "feature-2: version.txt angelegt"
+	modifyFile 'f3', content: '0.2'; commit "feature-2: version.txt aktualisiert"
+	addFile 'f4', path: 'copyright.txt', content: 'Feel free to do whatever you like.'; commit "Copyright-Notiz hinzugefuegt"
 
 	checkout 'master', create: false
 
