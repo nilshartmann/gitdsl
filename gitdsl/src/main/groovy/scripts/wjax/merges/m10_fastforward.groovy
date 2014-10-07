@@ -8,9 +8,9 @@ import java.util.Map;
 
 final def BASE_DIR=MERGES_BASE_DIR;
 
-final def LOKALES_REPO="${BASE_DIR}/01_ff-noff"
+final def LOKALES_REPO="${BASE_DIR}/10_ff-noff"
 
-Utils.recreateFile("$BASE_DIR/beispiel_01_ff-noff.txt") << """
+Utils.recreateFile("$BASE_DIR/beispiel_10_ff-noff.txt") << """
 SZENARIO 1: FF-MERGE
 
 	cd ${LOKALES_REPO}

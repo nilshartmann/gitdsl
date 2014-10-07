@@ -9,8 +9,8 @@ import java.util.Map;
 final def BASE_DIR=MERGES_BASE_DIR;
 
 
-final def FIRST_PARENT_REPO="${BASE_DIR}/02_first-parent"
-Utils.recreateFile("$BASE_DIR/beispiel_02_first-parent.txt") << """
+final def FIRST_PARENT_REPO="${BASE_DIR}/20_first-parent"
+Utils.recreateFile("$BASE_DIR/beispiel_20_first-parent.txt") << """
 
 # Beispiel: First Parent History
 

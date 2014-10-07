@@ -11,9 +11,9 @@ import gitdsl.Utils;
 final def BASE_DIR=MERGES_BASE_DIR;
 
 
-final beispielTxt = Utils.recreateFile("$BASE_DIR/beispiel_03_merge-base.txt");
+final beispielTxt = Utils.recreateFile("$BASE_DIR/beispiel_30_merge-base.txt");
 beispielTxt << """
-  cd $BASE_DIR/03_merge-base
+  cd $BASE_DIR/30_merge-base
   
 	# history zeigen
 
@@ -29,7 +29,7 @@ beispielTxt << """
 
 """
 
-GitRepository.recreateAt("$BASE_DIR/03_merge-base").setup {
+GitRepository.recreateAt("$BASE_DIR/30_merge-base").setup {
 
 	usePlugin 'counter', 'gitdsl.plugins.misc.CounterPlugin'
 
@@ -52,7 +52,7 @@ GitRepository.recreateAt("$BASE_DIR/03_merge-base").setup {
 	commits delegate, 'feature-1'
 }
 
-GitRepository.recreateAt("$BASE_DIR/03_merge-base-complex").setup {
+GitRepository.recreateAt("$BASE_DIR/30_merge-base-complex").setup {
 
 	usePlugin 'counter', 'gitdsl.plugins.misc.CounterPlugin'
 

@@ -8,8 +8,8 @@ import java.util.Map;
 
 final def BASE_DIR=MERGES_BASE_DIR;
 
-final def CONFLICT_REPO="${BASE_DIR}/04_conflicts"
-Utils.recreateFile("$BASE_DIR/beispiel_04_conflicts.txt") << """
+final def CONFLICT_REPO="${BASE_DIR}/40_conflicts"
+Utils.recreateFile("$BASE_DIR/beispiel_40_conflicts.txt") << """
 
 	# Ausgangssituation mit gitk zeigen: Zwei Branches, beide vom Master, beide README veraendert
 	
