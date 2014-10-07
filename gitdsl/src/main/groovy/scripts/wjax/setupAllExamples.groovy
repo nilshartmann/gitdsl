@@ -5,10 +5,10 @@ final String BASE_PACKAGE = 'scripts.wjax';
 
 def ALL_SCRIPTS = [
 	// merges
-	'merges.m01_fastforward',
-	'merges.m02_fphistory',
-	'merges.m03_mergeBase',
-	'merges.m04_conflicts',
+	'merges.m10_fastforward',
+	'merges.m20_fphistory',
+	'merges.m30_mergeBase',
+	'merges.m40_conflicts',
 	// remotes
 	'remotes.r01_remotes',
 	'remotes.r02_refspecs'
