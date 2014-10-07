@@ -41,6 +41,12 @@ git config remote.origin.pushurl file://${SPRING_REPO}
 git push
 # -> pusht zum upstream
 
+# push-url zuruecksetzen
+git config --unset remote.origin.pushurl
+git remote rm upstream
+
+
+
 """
 
 GitRepository.recreateAt("${SPRING_REPO}.tmp").setup {
