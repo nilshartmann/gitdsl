@@ -14,14 +14,16 @@ def ALL_SCRIPTS = [
 	'remotes.r01_remotes',
 	'remotes.r02_refspecs',
 	// gitflow
-	'gitflow.g10_simple'
+	'gitflow.g10_simple',
+	// jgit
+	'jgit.j10_simple'
 ];
 
 Utils.deleteDirectory WJaxUtils.REMOTES_BASE_DIR
 Utils.deleteDirectory WJaxUtils.REFSPECS_BASE_DIR
 Utils.deleteDirectory WJaxUtils.MERGES_BASE_DIR
 Utils.deleteDirectory WJaxUtils.GITFLOW_BASE_DIR
-
+Utils.deleteDirectory WJaxUtils.JGIT_BASE_DIR
 
 
 for (script in ALL_SCRIPTS) {
