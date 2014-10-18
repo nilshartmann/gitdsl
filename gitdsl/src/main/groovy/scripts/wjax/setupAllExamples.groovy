@@ -12,12 +12,16 @@ def ALL_SCRIPTS = [
 	'merges.m40_conflicts',
 	// remotes
 	'remotes.r01_remotes',
-	'remotes.r02_refspecs'
+	'remotes.r02_refspecs',
+	// gitflow
+	'gitflow.g10_simple'
 ];
 
 Utils.deleteDirectory WJaxUtils.REMOTES_BASE_DIR
 Utils.deleteDirectory WJaxUtils.REFSPECS_BASE_DIR
 Utils.deleteDirectory WJaxUtils.MERGES_BASE_DIR
+Utils.deleteDirectory WJaxUtils.GITFLOW_BASE_DIR
+
 
 
 for (script in ALL_SCRIPTS) {

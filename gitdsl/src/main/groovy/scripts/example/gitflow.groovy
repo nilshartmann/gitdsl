@@ -51,6 +51,8 @@ GitRepository.recreateAt("/tmp/testgitflow").setup {
 	// enthält NICHT den Hotfix v_v0.1.1 ....
 	gf.finishRelease 'v_0.2'
 
+	gf.finishFeature 'F_004'
+
 }
 
 

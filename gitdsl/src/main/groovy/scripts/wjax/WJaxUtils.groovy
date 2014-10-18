@@ -29,7 +29,7 @@ class WJaxUtils {
 	}
 
 	final static def commits(Map args = new Hashtable(), gitdsl.RepositoryScript gs, String branch) {
-		gs.checkout branch, startPoint: 'master';
+		gs.checkout branch, startPoint: args.get('startPoint', 'master');
 
 		final int commits = args.get('commits', 3);
 
@@ -50,7 +50,8 @@ class WJaxUtils {
 		String mergeTo = args.get("mergeTo");
 		if (mergeTo) {
 			gs.checkout mergeTo
-			gs.merge branch, message: "Finished $branch: '$args.subject' (Merged into $mergeTo)"
+			String message = args.subject ? "Finished $branch: '$args.subject' (Merged into $mergeTo)" : "Finished $branch (Merged into $mergeTo)"
+			gs.merge branch, message: message
 		}
 	}
 
@@ -62,4 +63,5 @@ class WJaxUtils {
 	final static String MERGES_BASE_DIR = baseDir("merges");
 	final static String REMOTES_BASE_DIR = baseDir("remotes");
 	final static String REFSPECS_BASE_DIR = baseDir("refspecs");
+	final static String GITFLOW_BASE_DIR = baseDir("gitflow");
 }
