@@ -26,11 +26,23 @@ class RepositoryFile {
 		this.file = createFile(locationInRepository);
 
 		// (Leere) Datei anlegen
-		this.file.createNewFile();
+		if (!this.file.exists()) {
+			this.file.createNewFile();
 
-		if (initialContent) {
-			writeContent initialContent;
+			if (initialContent) {
+				writeContent initialContent;
+			}
 		}
+	}
+
+	def replace(Map args) {
+		String currentContent = this.file.getText();
+		for ( e in args ) {
+			System.out.println("Replace '$e.key' mit '$e.value'")
+			currentContent = currentContent.replaceAll(e.key, e.value);
+		}
+
+		file.text = currentContent;
 
 	}
 

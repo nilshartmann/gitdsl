@@ -102,9 +102,18 @@ class RepositoryScript {
 			}
 		}
 
-		if (!args.content && !args.add) {
+		if (args.replace) {
+			repoFile.replace(args.replace);
+		}
+
+		if (!args.content && !args.add && !args.replace) {
 			repoFile << "A new line%n"
 		}
+
+
+
+
+
 
 		return repoFile;
 	}
@@ -131,6 +140,10 @@ class RepositoryScript {
 
 		Git git = new Git(repository)
 		git.rm().addFilepattern(repoFile.locationInRepository).call();
+	}
+
+	def copyExternalDirectory(String directory) {
+		Utils.copyDirectory(directory, repositoryRoot.absolutePath);
 	}
 
 	def commit(String message) {
