@@ -65,4 +65,5 @@ class WJaxUtils {
 	final static String REFSPECS_BASE_DIR = baseDir("refspecs");
 	final static String GITFLOW_BASE_DIR = baseDir("gitflow");
 	final static String JGIT_BASE_DIR = baseDir("jgit");
+	final static String BUILD_BASE_DIR = baseDir("build");
 }

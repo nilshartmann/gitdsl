@@ -16,7 +16,9 @@ def ALL_SCRIPTS = [
 	// gitflow
 	'gitflow.g10_simple',
 	// jgit
-	'jgit.j10_simple'
+	'jgit.j10_simple',
+	// build
+	'build.b10_mavenRelPlugin'
 ];
 
 Utils.deleteDirectory WJaxUtils.REMOTES_BASE_DIR
@@ -24,7 +26,7 @@ Utils.deleteDirectory WJaxUtils.REFSPECS_BASE_DIR
 Utils.deleteDirectory WJaxUtils.MERGES_BASE_DIR
 Utils.deleteDirectory WJaxUtils.GITFLOW_BASE_DIR
 Utils.deleteDirectory WJaxUtils.JGIT_BASE_DIR
-
+Utils.deleteDirectory WJaxUtils.BUILD_BASE_DIR
 
 for (script in ALL_SCRIPTS) {
 
