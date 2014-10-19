@@ -18,7 +18,8 @@ def ALL_SCRIPTS = [
 	// jgit
 	'jgit.j10_simple',
 	// build
-	'build.b10_mavenRelPlugin'
+	'build.b10_mavenRelPlugin',
+	'build.b20_atlassianJgitFlowPlugin'
 ];
 
 Utils.deleteDirectory WJaxUtils.REMOTES_BASE_DIR
