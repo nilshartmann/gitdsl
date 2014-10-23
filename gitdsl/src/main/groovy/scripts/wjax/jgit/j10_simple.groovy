@@ -6,7 +6,10 @@ import gitdsl.Utils;
 
 import java.util.Map;
 
-final def BASE_DIR=GITFLOW_BASE_DIR;
+// ===== BEISPIEL / REPOSITORY NUR FUER DAS jgit_example BENOETIGT ============
+//    == Braucht nicht mit auf die VM ======
+
+final def BASE_DIR=JGIT_BASE_DIR;
 
 final def LOKALES_REPO="${BASE_DIR}/10_simple"
 

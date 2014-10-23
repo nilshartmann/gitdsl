@@ -29,7 +29,8 @@ class WJaxUtils {
 	}
 
 	final static def commits(Map args = new Hashtable(), gitdsl.RepositoryScript gs, String branch) {
-		gs.checkout branch, startPoint: args.get('startPoint', 'master');
+		final String startPoint = args.get('startPoint', 'master');
+		gs.checkout branch, startPoint: startPoint;
 
 		final int commits = args.get('commits', 3);
 
@@ -37,12 +38,14 @@ class WJaxUtils {
 			int commitCount = gs.counter.next("commits_on_branch_$branch")
 			String line = "$branch: $commitCount. Commit"
 
+			String file = args.get('file', 'f1');
+
 			if (args.content) {
-				gs.modifyFile 'f1', content: args.content; gs.commit line;
+				gs.modifyFile file, content: args.content; gs.commit line;
 			} else if (args.add) {
-				gs.modifyFile 'f1', add: args.add; gs.commit line;
+				gs.modifyFile file, add: args.add; gs.commit line;
 			} else {
-				gs.modifyFile 'f1', add: line; gs.commit line;
+				gs.modifyFile file, add: line; gs.commit line;
 			}
 		}
 
@@ -52,6 +55,10 @@ class WJaxUtils {
 			gs.checkout mergeTo
 			String message = args.subject ? "Finished $branch: '$args.subject' (Merged into $mergeTo)" : "Finished $branch (Merged into $mergeTo)"
 			gs.merge branch, message: message
+
+			if (args.get("deleteAfterMerge")) {
+				gs.deleteBranches branch
+			}
 		}
 	}
 
