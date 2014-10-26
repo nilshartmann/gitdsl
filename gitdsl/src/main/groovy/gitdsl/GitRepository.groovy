@@ -12,6 +12,8 @@ import java.nio.file.attribute.BasicFileAttributes
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.internal.storage.file.FileRepository
 import org.eclipse.jgit.lib.Repository
+import org.eclipse.jgit.lib.RepositoryBuilder;
+import org.eclipse.jgit.storage.file.FileRepositoryBuilder;
 
 import groovy.util.logging.Log;
 import groovy.util.logging.Log4j2;
@@ -28,6 +30,20 @@ class GitRepository {
 	//
 	//		new GitRepository(location: repositoryDir);
 	//	}
+
+	def static useExisting(String path) {
+		assert path
+
+		File workingDir = new File(path);
+		assert workingDir.isDirectory();
+
+		File gitDir = new File(workingDir, ".git");
+		assert gitDir.isDirectory();
+
+		def repository = FileRepositoryBuilder.create(gitDir)
+		new GitRepository(repository: repository);
+
+	}
 
 
 

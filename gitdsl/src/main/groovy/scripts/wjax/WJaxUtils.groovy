@@ -73,4 +73,5 @@ class WJaxUtils {
 	final static String GITFLOW_BASE_DIR = baseDir("gitflow");
 	final static String JGIT_BASE_DIR = baseDir("jgit");
 	final static String BUILD_BASE_DIR = baseDir("build");
+	final static String SUBREPO_BASE_DIR = baseDir("submodule_subtree");
 }

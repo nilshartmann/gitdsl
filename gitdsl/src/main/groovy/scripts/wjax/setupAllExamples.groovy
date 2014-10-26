@@ -19,7 +19,9 @@ def ALL_SCRIPTS = [
 	'jgit.j10_simple',
 	// build
 	'build.b10_mavenRelPlugin',
-	'build.b20_atlassianJgitFlowPlugin'
+	'build.b20_atlassianJgitFlowPlugin',
+	// submodule_subtree
+	'subrepo.s10_submodule_subtree'
 ];
 
 Utils.deleteDirectory WJaxUtils.REMOTES_BASE_DIR
@@ -28,6 +30,7 @@ Utils.deleteDirectory WJaxUtils.MERGES_BASE_DIR
 Utils.deleteDirectory WJaxUtils.GITFLOW_BASE_DIR
 Utils.deleteDirectory WJaxUtils.JGIT_BASE_DIR
 Utils.deleteDirectory WJaxUtils.BUILD_BASE_DIR
+Utils.deleteDirectory WJaxUtils.SUBREPO_BASE_DIR
 
 for (script in ALL_SCRIPTS) {
 

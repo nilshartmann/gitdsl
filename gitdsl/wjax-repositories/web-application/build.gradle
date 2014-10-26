@@ -14,8 +14,13 @@ dependencies {
 jettyRunWar.contextPath = ''
 jettyRun.contextPath = ''
 
-jettyRun.doFirst { System.setProperty('de.gitworkshop.web.launcherId', 'gradle::jettyRun') }
+task jettyRunDaemon (type: JettyRun) {
+    contextPath = '/'
+    daemon = true
+}
 
-httpPort = 8080
-stopPort = 9451
-stopKey = 'foo'
+jettyRun.doFirst { 
+	System.setProperty('de.gitworkshop.web.launcherId', 'gradle::jettyRun') 
+}
+
+
