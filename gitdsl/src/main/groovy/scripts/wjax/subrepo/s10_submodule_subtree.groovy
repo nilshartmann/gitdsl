@@ -17,11 +17,10 @@ GitRepository.recreateAt("${SUBREPO_BASE_DIR}/submodule/web-application").setup 
 
 //GitRepository.recreateAt("${SUBREPO_BASE_DIR}/subtree/web-application").setup {
 //	usePlugin 'counter', 'gitdsl.plugins.misc.CounterPlugin'
-//
 //	copyExternalDirectory '/Users/nils/develop/wjax2014_git_workshop/git-repos/maventest/gitdsl/wjax-repositories/submodule_subtree/web-application'
-//
 //	commit "Initial Import"
-//}
+//} //.createAsBareAt("${SUBREPO_BASE_DIR}/subtree/web-application.git", deleteSource: true)
+//
 
 
 Utils.copyDirectory(
@@ -75,6 +74,9 @@ GitRepository.useExisting("${SUBREPO_BASE_DIR}/submodule/bootstrap").setup {
 
 
 }.createAsBareAt("${SUBREPO_BASE_DIR}/submodule/bootstrap.git", deleteSource: true)
+
+Utils.copyDirectory "${SUBREPO_BASE_DIR}/submodule", "${SUBREPO_BASE_DIR}/subtree"
+
 
 //Utils.copyDirectory(
 //		'/Users/nils/develop/wjax2014_git_workshop/git-repos/maventest/gitdsl/wjax-repositories/submodule_subtree/bootstrap.git',
