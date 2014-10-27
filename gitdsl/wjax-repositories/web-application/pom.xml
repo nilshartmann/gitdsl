@@ -9,7 +9,7 @@
 	<name>Git Workshop Webapplication</name>
 	<url>http://maven.apache.org</url>
 	<scm>
-		<developerConnection>scm:git:SCM_REMOTE_REPO</developerConnection>
+		<developerConnection>scm:git:file:///opt/workshop/git-repos/web-application.git</developerConnection>
 	</scm>
 
 	<dependencies>
@@ -34,7 +34,7 @@
 	<distributionManagement>
 		<repository>
 			<id>maven-repository</id>
-			<url>file:///Users/nils/develop/wjax2014_git_workshop/beispielapp/mvn-repo</url>
+			<url>file:///opt/workshop/mvn-repo</url>
 		</repository>
 	</distributionManagement>
 
